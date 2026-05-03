@@ -6,6 +6,8 @@ import AudioPlayer from './components/AudioPlayer';
 import JournalSection from './components/JournalSection';
 import StatusFeed from './components/StatusFeed';
 import GuidedSection from './components/GuidedSection';
+import SummerInteractive from './components/SummerInteractive';
+import AutumnInteractive from './components/AutumnInteractive';
 import RightSidebar from './components/RightSidebar';
 import EpisodeList from './components/EpisodeList';
 import EQTest from './components/EQTest';
@@ -19,7 +21,7 @@ import { auth } from './lib/firebase';
 import { onAuthStateChanged, signInAnonymously, type User } from 'firebase/auth';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './lib/utils';
-import { Loader2, Gauge, ArrowRight } from 'lucide-react';
+import { Loader2, Gauge, ArrowRight, PenTool } from 'lucide-react';
 
 function App() {
   const [currentView, setCurrentView] = useState<'home' | 'season' | 'eq-test' | 'conclusion' | 'about'>('home');
@@ -175,15 +177,30 @@ function App() {
                   <StorySection season={activeSeason} />
                 </div>
 
-                {/* Guided Section: Now fits below the main story to fill the page bridge */}
-                <div className="w-full">
-                  <GuidedSection season={activeSeason} />
-                </div>
+                {/* Interactive Content for Summer/Autumn */}
+                {activeSeason.id === 'summer' && (
+                  <div className="w-full">
+                    <SummerInteractive season={activeSeason} />
+                  </div>
+                )}
                 
-                {/* Horizontal Grid for Community Content and Practice Sidebar */}
-                <div className="flex flex-col xl:flex-row gap-12 items-start">
+                {activeSeason.id === 'autumn' && (
+                  <div className="w-full">
+                    <AutumnInteractive season={activeSeason} />
+                  </div>
+                )}
+                
+                {/* Guided Section: show for Spring/Winter, specifically when not Summer/Autumn interactive */}
+                {(activeSeason.id === 'spring' || activeSeason.id === 'winter') && (
+                  <div className="w-full">
+                    <GuidedSection season={activeSeason} />
+                  </div>
+                )}
+                
+                {/* Community and Feed Section */}
+                <div className="space-y-16">
                   {/* Left Column: Sharing and Community Feed */}
-                  <div className="flex-1 min-w-0 w-full space-y-16">
+                  <div className="w-full space-y-16">
                     {/* Seasonal EQ Test Section */}
                     <div className="glass-card p-10 border-brand-orange/10 bg-gradient-to-br from-white to-brand-orange/[0.02]">
                       <div className="flex items-center gap-3 mb-6">
@@ -192,17 +209,46 @@ function App() {
                         </div>
                         <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-brand-muted">Hành trình EQ</span>
                       </div>
-                      <h3 className="text-2xl font-display font-bold mb-3">{activeSeason.eqTest.title}</h3>
-                      <p className="text-brand-muted leading-relaxed mb-8 max-w-2xl">
-                        {activeSeason.eqTest.description}
-                      </p>
-                      <button 
-                        onClick={() => setCurrentView('eq-test')}
-                        className={cn("px-8 py-4 rounded-full text-white font-bold transition-all hover:scale-105 active:scale-95 shadow-lg flex items-center gap-3", activeSeason.accentColor)}
-                      >
-                        Bắt đầu bài test <ArrowRight className="w-4 h-4" />
-                      </button>
+                      <h3 className="text-2xl font-display font-bold mb-3">
+                        {activeSeason.eqTests.length > 1 
+                          ? `Hành trình ${activeSeason.name}: ${activeSeason.eqTests.length} bài test EQ` 
+                          : activeSeason.eqTests[0]?.title}
+                      </h3>
+                      <div className="text-brand-muted leading-relaxed mb-8 max-w-3xl whitespace-pre-wrap">
+                        {activeSeason.eqTests[0]?.description}
+                      </div>
+                      {activeSeason.id !== 'autumn' && (
+                        <button 
+                          onClick={() => setCurrentView('eq-test')}
+                          className={cn("px-8 py-4 rounded-full text-white font-bold transition-all hover:scale-105 active:scale-95 shadow-lg flex items-center gap-3", activeSeason.accentColor)}
+                        >
+                          Bắt đầu bài test <ArrowRight className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
+
+                    {activeSeason.writingPrompts && (
+                      <div className="glass-card p-10 border-brand-orange/10 bg-white/60 mb-10">
+                        <div className="flex items-center gap-3 mb-8">
+                          <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center text-white", activeSeason.accentColor)}>
+                            <PenTool className="w-5 h-5" />
+                          </div>
+                          <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-brand-muted">Gợi ý viết nhật ký</span>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {activeSeason.writingPrompts.map((prompt, i) => (
+                            <div key={i} className="flex gap-4 p-5 rounded-3xl bg-brand-cream/20 border border-brand-orange/5">
+                              <div className="shrink-0 w-6 h-6 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange font-black text-[10px]">
+                                ?
+                              </div>
+                              <p className="text-brand-text font-serif italic text-sm leading-relaxed">
+                                {prompt}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     <div className="mb-10">
                       <JournalSection />
@@ -213,14 +259,14 @@ function App() {
                     </div>
                   </div>
 
-                  {/* Right Sidebar: Sticky practice actions */}
-                  <aside className="w-full xl:w-[340px] shrink-0 xl:sticky xl:top-28">
+                  {/* Practice Section: Moved to bottom as requested */}
+                  <div className="w-full">
                     <RightSidebar 
                       season={activeSeason} 
                       onAction={handleActionClick}
                       onOpenJournal={() => setIsJournalOpen(true)}
                     />
-                  </aside>
+                  </div>
                 </div>
               </div>
 

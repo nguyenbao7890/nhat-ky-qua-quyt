@@ -39,51 +39,64 @@ export default function RightSidebar({
       {/* Practice now */}
       <div className="glass-card p-8 border-none bg-white shadow-[0_30px_70px_-20px_rgba(0,0,0,0.04)]">
         <div className="flex items-center gap-3 mb-8">
-           <div className={cn("w-1.5 h-10 rounded-full", season.accentColor)} />
-           <h4 className="text-lg font-display font-bold">Thực hành ngay</h4>
+           <div className={cn("w-1.5 h-6 rounded-full", season.id === 'summer' ? 'bg-[#f26622]' : season.id === 'spring' ? 'bg-emerald-500' : season.id === 'autumn' ? 'bg-amber-600' : 'bg-blue-600')} />
+           <h4 className="text-sm font-display font-bold text-brand-text">Thực hành ngay</h4>
         </div>
         
         <div className="space-y-4">
           {season.actions.map((action, i) => (
-            <div key={i}>
-              <PracticeItem 
-                icon={<span className="text-sm">{action.icon}</span>}
-                title={action.text}
-                season={season}
-                onClick={() => onAction(action.text)}
-              />
-            </div>
+            <PracticeItem 
+              key={i}
+              icon={action.icon}
+              title={action.text}
+              season={season}
+              onClick={() => onAction(action.text)}
+            />
           ))}
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-brand-orange/10">
+           <div className="bg-brand-orange/[0.03] border-l-2 border-brand-orange p-5 rounded-r-xl italic text-[11px] text-brand-muted leading-relaxed font-serif">
+             {season.id === 'summer' && "Đây chính là bước đầu của trí tuệ cảm xúc: nhận diện – hiểu – và điều chỉnh phản ứng của bản thân trước một tình huống."}
+             {season.id === 'spring' && "Mầm xanh EQ bắt đầu từ việc em dám nhìn thẳng vào cảm xúc của chính mình mà không phán xét."}
+             {season.id === 'autumn' && "Mùa thu là lúc ta học cách lắng nghe để thấu cảm và hàn gắn những rạn nứt trong các mối quan hệ."}
+             {season.id === 'winter' && "Bình an đến từ việc ta học cách buông bỏ những điều không còn thuộc về mình để tái tạo năng lượng."}
+           </div>
         </div>
       </div>
 
       {/* Write to journal button */}
       <button 
         onClick={onOpenJournal}
-        className={cn("w-full group relative overflow-hidden p-1 rounded-3xl transition-transform hover:scale-[1.02] active:scale-[0.98]", season.accentColor)}
+        className={cn(
+          "w-full flex items-center justify-between p-6 rounded-[32px] group transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xl text-white",
+          season.id === 'summer' ? 'bg-[#f26622] shadow-[#f26622]/20' : 
+          season.id === 'spring' ? 'bg-emerald-500 shadow-emerald-500/20' :
+          season.id === 'autumn' ? 'bg-amber-600 shadow-amber-600/20' : 'bg-blue-600 shadow-blue-600/20'
+        )}
       >
-        <div className={cn("text-white px-8 py-5 rounded-[22px] font-bold flex items-center justify-between", season.accentColor)}>
-          <div className="text-left">
-            <p className="text-[10px] uppercase tracking-widest opacity-80 mb-1">Viết vào</p>
-            <p className="text-lg">Nhật ký Quả Quýt</p>
-          </div>
-          <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
-            <PenTool className="w-6 h-6" />
-          </div>
+        <div className="text-left">
+          <div className="text-[10px] font-black uppercase tracking-widest opacity-70 mb-0.5">VIẾT VÀO</div>
+          <div className="text-lg font-display font-bold leading-tight">Nhật ký Quả Quýt</div>
+        </div>
+        <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-md group-hover:rotate-12 transition-transform">
+          <PenTool className="w-5 h-5" />
         </div>
       </button>
 
-      {/* Back button */}
-      <button className="w-full py-4 text-[10px] font-bold uppercase tracking-[0.3em] text-brand-muted hover:text-brand-orange transition-colors flex items-center justify-center gap-3 bg-brand-cream/30 rounded-2xl">
-        <div className="w-1.5 h-1.5 rounded-full bg-brand-muted group-hover:bg-brand-orange" />
-        Quay lại hoạt động
-      </button>
+      {/* Navigation help */}
+      <div className="flex flex-col items-center pt-4">
+         <button className="flex items-center gap-3 group">
+            <div className="w-1.5 h-1.5 rounded-full bg-brand-muted/20 group-hover:bg-brand-orange transition-colors" />
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-muted group-hover:text-brand-orange transition-colors">QUAY LẠI HOẠT ĐỘNG</span>
+         </button>
+      </div>
     </div>
   );
 }
 
 interface PracticeItemProps {
-  icon: React.ReactNode;
+  icon: string;
   title: string;
   season: SeasonInfo;
   onClick: () => void;
@@ -94,26 +107,24 @@ function PracticeItem({ icon, title, season, onClick }: PracticeItemProps) {
                     season.id === 'spring' ? 'group-hover:text-emerald-500' :
                     season.id === 'autumn' ? 'group-hover:text-amber-600' : 'group-hover:text-blue-500';
   
-  const accentBorder = season.id === 'summer' ? 'hover:border-[#f26622]/10' : 
-                      season.id === 'spring' ? 'hover:border-emerald-500/10' :
-                      season.id === 'autumn' ? 'hover:border-amber-600/10' : 'hover:border-blue-500/10';
-
-  const accentBg = season.id === 'summer' ? 'hover:bg-[#f26622]/[0.03]' : 
-                  season.id === 'spring' ? 'hover:bg-emerald-500/[0.03]' :
-                  season.id === 'autumn' ? 'hover:bg-amber-600/[0.03]' : 'hover:bg-blue-500/[0.03]';
-
   return (
     <button 
       onClick={onClick}
-      className={cn("w-full flex items-center justify-between p-4 rounded-2xl bg-brand-cream/20 transition-all border border-transparent group", accentBg, accentBorder)}
+      className={cn(
+        "w-full flex items-center justify-between p-4 rounded-[32px] transition-all border border-brand-orange/5 bg-brand-cream/5 hover:bg-white hover:border-brand-orange/20 hover:shadow-xl hover:shadow-brand-orange/5 group"
+      )}
     >
       <div className="flex items-center gap-4">
-        <div className={cn("w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-brand-muted/60 transition-colors", accentText)}>
+        <div className="w-12 h-12 rounded-full bg-white border border-brand-orange/10 flex items-center justify-center text-2xl shadow-sm transition-transform group-hover:scale-110">
           {icon}
         </div>
-        <span className={cn("text-sm font-bold text-brand-text/80 transition-colors", accentText)}>{title}</span>
+        <span className={cn("text-[15px] font-bold text-brand-text/80 transition-colors", accentText)}>
+          {title}
+        </span>
       </div>
-      <ChevronRight className={cn("w-4 h-4 text-brand-muted/30 transition-all", accentText)} />
+      <div className="w-8 h-8 rounded-full flex items-center justify-center transition-all group-hover:translate-x-1">
+        <ChevronRight className={cn("w-4 h-4 text-brand-muted/30", accentText)} />
+      </div>
     </button>
   );
 }

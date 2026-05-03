@@ -65,7 +65,7 @@ export default function JournalSection() {
 
       <div className="relative z-10 max-w-2xl">
         <h3 className="text-2xl font-display font-bold mb-3 text-brand-text">Cùng chia sẻ cảm xúc</h3>
-        <p className="text-brand-muted mb-10 text-sm font-medium">Chia sẻ ẩn danh với cộng đồng để thấy mình không đơn độc. <br /><span className="text-[10px] opacity-60">(Phần này sẽ không lưu vào nhật ký cá nhân của em)</span></p>
+        <p className="text-brand-muted mb-10 text-sm font-medium">Chia sẻ để thấy mình không đơn độc.</p>
         
         <form onSubmit={handleSubmit} className="relative z-50 group/form">
           <textarea

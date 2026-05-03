@@ -1,84 +1,40 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  ChevronRight, 
   ChevronLeft, 
-  RotateCcw, 
-  CheckCircle2, 
-  AlertCircle, 
   Clock, 
-  HelpCircle, 
-  FileText,
   ArrowRight,
-  Info,
-  Puzzle,
-  Gauge,
-  User,
-  Star,
-  Award,
-  Sparkles,
-  Lightbulb
+  ArrowLeft,
+  CheckCircle2
 } from 'lucide-react';
 import { cn } from '../lib/utils';
-
-interface Question {
-  id: number;
-  text: string;
-  category: string;
-}
-
-const QUESTIONS: Question[] = [
-  { id: 1, text: "Tôi luôn sẵn sàng kết bạn với nhiều người bất cứ khi nào có thể.", category: "Kỹ năng xã hội" },
-  { id: 2, text: "Tôi không cảm thấy thoải mái khi để người khác đợi mình.", category: "Tự điều chỉnh" },
-  { id: 3, text: "Tôi thích dành thời gian cho trẻ em và người cao tuổi.", category: "Đồng cảm" },
-  { id: 4, text: "Tôi không yêu cầu người khác làm những việc mà họ không muốn làm.", category: "Đồng cảm" },
-  { id: 5, text: "Tôi luôn gọi cho mọi người để xác nhận thời gian cuộc họp.", category: "Kỹ năng xã hội" },
-  { id: 6, text: "Tôi có thể nhận ra chính xác cảm xúc của mình khi chúng đang xảy ra.", category: "Tự nhận thức" },
-  { id: 7, text: "Tôi biết cách kiểm soát những cơn xúc động mạnh như giận dữ hay lo lắng.", category: "Tự điều chỉnh" },
-  { id: 8, text: "Tôi thường giữ được sự bình tĩnh trước những lời chỉ trích.", category: "Tự điều chỉnh" },
-  { id: 9, text: "Tôi dễ dàng thấu hiểu nỗi đau của người khác dù chưa từng trải qua.", category: "Đồng cảm" },
-  { id: 10, text: "Tôi luôn tìm thấy động lực để hoàn thành mục tiêu dù gặp trở ngại.", category: "Động lực" },
-  { id: 11, text: "Tôi hiểu rõ những gì là 'ngòi nổ' khiến mình mất kiểm soát.", category: "Tự nhận thức" },
-  { id: 12, text: "Tôi thường suy nghĩ kỹ về hậu quả trước khi nói lúc nóng giận.", category: "Tự điều chỉnh" },
-  { id: 13, text: "Tôi có khả năng thuyết phục và tạo ảnh hưởng tích cực lên người khác.", category: "Kỹ năng xã hội" },
-  { id: 14, text: "Tôi lắng nghe mà không ngắt lời hay phán xét đối phương.", category: "Đồng cảm" },
-  { id: 15, text: "Tôi nhận thức rõ những điểm mạnh và điểm yếu của mình.", category: "Tự nhận thức" },
-  { id: 16, text: "Tôi sẵn sàng thừa nhận sai lầm thay vì cố gắng đổ lỗi.", category: "Kỹ năng xã hội" },
-  { id: 17, text: "Tôi biết cách khích lệ và truyền cảm hứng cho mọi người xung quanh.", category: "Kỹ năng xã hội" },
-  { id: 18, text: "Tôi dành thời gian để suy ngẫm về những cảm xúc mình trải qua hàng ngày.", category: "Tự nhận thức" },
-  { id: 19, text: "Tôi có thể tập trung vào mục tiêu dài hạn thay vì sự thỏa mãn tức thời.", category: "Động lực" },
-  { id: 20, text: "Tôi biết cách hòa giải các mâu thuẫn một cách khéo léo.", category: "Kỹ năng xã hội" },
-  { id: 21, text: "Tôi cảm nhận được bầu không khí của căn phòng ngay khi vừa bước vào.", category: "Đồng cảm" },
-  { id: 22, text: "Tôi biết cách xây dựng và duy trì các mối quan hệ lâu dài.", category: "Kỹ năng xã hội" },
-  { id: 23, text: "Tôi coi trọng việc hiểu về cảm xúc ngang bằng với kiến thức chuyên môn.", category: "Tự nhận thức" },
-  { id: 24, text: "Tôi luôn quan tâm đến nhu cầu cảm xúc của bạn bè và người thân.", category: "Đồng cảm" },
-  { id: 25, text: "Tôi có thể kiềm chế sự bốc đồng khi đưa ra các quyết định quan trọng.", category: "Tự điều chỉnh" },
-  { id: 26, text: "Tôi thường tìm thấy những khía cạnh tích cực ngay cả trong biến cố.", category: "Động lực" },
-  { id: 27, text: "Tôi biết cách nói 'không' mà không làm tổn thương người khác.", category: "Kỹ năng xã hội" },
-  { id: 28, text: "Tôi nhận diện được các dấu hiệu stress của bản thân từ sớm.", category: "Tự nhận thức" },
-  { id: 29, text: "Tôi không để những thất bại làm mình nhụt chí quá lâu.", category: "Động lực" },
-  { id: 30, text: "Tôi có khả năng thích nghi nhanh với những thay đổi bất ngờ.", category: "Tự điều chỉnh" },
-  { id: 31, text: "Tôi tôn trọng ranh giới cá nhân của tất cả mọi người.", category: "Kỹ năng xã hội" },
-  { id: 32, text: "Tôi hiểu rằng cảm xúc là thông điệp cần được lắng nghe thay vì chối bỏ.", category: "Tự nhận thức" },
-];
-
-const OPTIONS = [
-  { label: "Đúng", value: true },
-  { label: "Sai", value: false },
-];
-
 import { SeasonInfo } from '../seasonsData';
 
 export default function EQTest({ season, onBack }: { season: SeasonInfo; onBack: () => void }) {
   const [status, setStatus] = useState<'intro' | 'testing' | 'result'>('intro');
+  const [activeTestIndex, setActiveTestIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(0); 
   const [answers, setAnswers] = useState<Record<string, number | null>>({});
   const [timeLeft, setTimeLeft] = useState(10 * 60);
 
-  const QUESTIONS = season.eqTest.questions;
-  const OPTIONS = season.eqTest.options;
+  const activeTest = season.eqTests[activeTestIndex] || season.eqTests[0];
+
+  const QUESTIONS = activeTest?.questions || [];
+  const OPTIONS = activeTest?.options || [];
   const QUESTIONS_PER_PAGE = 5;
   const totalPages = Math.ceil(QUESTIONS.length / QUESTIONS_PER_PAGE);
+
+  const stats = activeTest?.stats || {
+    questions: QUESTIONS.length,
+    time: '8-10 phút',
+    scale: [
+      { value: 1, label: 'Rất không đúng', emoji: '🟤' },
+      { value: 2, label: 'Không đúng', emoji: '🟠' },
+      { value: 3, label: 'Bình thường', emoji: '🟡' },
+      { value: 4, label: 'Đúng', emoji: '🟢' },
+      { value: 5, label: 'Rất đúng', emoji: '🔵' }
+    ]
+  };
 
   useEffect(() => {
     let timer: any;
@@ -97,9 +53,11 @@ export default function EQTest({ season, onBack }: { season: SeasonInfo; onBack:
   };
 
   const calculateResults = useCallback(() => {
-    if (season.eqTest.results.type === 'pillars') {
+    if (!activeTest) return null;
+
+    if (activeTest.results.type === 'pillars') {
       const pillars: Record<string, { total: number; count: number }> = {};
-      Object.keys(season.eqTest.results.categories || {}).forEach(cat => {
+      Object.keys(activeTest.results.categories || {}).forEach(cat => {
         pillars[cat] = { total: 0, count: 0 };
       });
 
@@ -108,7 +66,7 @@ export default function EQTest({ season, onBack }: { season: SeasonInfo; onBack:
         if (answer !== undefined && answer !== null && q.category) {
           let score = answer;
           if (q.reversed) {
-            score = 6 - answer; // Assuming 1-5 scale
+            score = (stats.scale.length + 1) - answer;
           }
           pillars[q.category].total += score;
           pillars[q.category].count += 1;
@@ -116,76 +74,174 @@ export default function EQTest({ season, onBack }: { season: SeasonInfo; onBack:
       });
 
       const processedPillars = Object.entries(pillars).map(([key, data]) => {
-        const maxPerQuestion = 5;
-        const percentage = Math.round((data.total / (data.count * maxPerQuestion)) * 100);
+        const maxScore = data.count * stats.scale.length;
+        const percentage = maxScore > 0 ? Math.round((data.total / maxScore) * 100) : 0;
         return {
           id: key,
-          name: season.eqTest.results.categories?.[key] || key,
+          name: activeTest.results.categories?.[key] || key,
           score: percentage
         };
       });
 
       return { type: 'pillars' as const, data: processedPillars };
+    } else if (activeTest.results.type === 'count') {
+      const counts: Record<string, number> = {};
+      
+      QUESTIONS.forEach(q => {
+        const answerVal = answers[q.id];
+        const optionsToSearch = q.options || activeTest.options;
+        const option = optionsToSearch.find(o => o.value === answerVal);
+        if (option?.taste) {
+          counts[option.taste] = (counts[option.taste] || 0) + 1;
+        }
+      });
+
+      // Find dominant taste (>= 5)
+      let dominantTaste = "";
+      Object.entries(counts).forEach(([taste, count]) => {
+        if (count >= 5) dominantTaste = taste;
+      });
+
+      const interpretation = dominantTaste 
+        ? activeTest.results.countMeanings?.[dominantTaste]
+        : {
+            title: 'Hương Vị Hỗn Hợp',
+            description: 'Em là người trưởng thành về cảm xúc – chấp nhận được cả chua, chát lẫn ngọt. Em linh hoạt, biết điều chỉnh và tìm thấy sự cân bằng trong cuộc sống.',
+            challenge: 'Thử thách dành cho em: Hãy viết một bức thư ngắn gửi chính mình của 10 năm sau, kể về những điều em muốn giữ lại và những điều em muốn buông bỏ.'
+          };
+
+      return { type: 'count' as const, counts, interpretation };
     } else {
-      const totalScore = Object.values(answers).reduce((acc, val) => (acc || 0) + (val || 0), 0);
-      const range = season.eqTest.results.ranges?.find(r => totalScore >= r.min && totalScore <= r.max);
+      const totalScore = Object.values(answers).reduce((acc, val) => acc + (val || 0), 0);
+      const range = activeTest.results.ranges?.find(r => totalScore >= r.min && totalScore <= r.max);
       return { type: 'score' as const, score: totalScore, range };
     }
-  }, [answers, QUESTIONS, season.eqTest.results]);
+  }, [answers, QUESTIONS, activeTest, stats.scale.length]);
 
   const resetTest = () => {
     setAnswers({});
     setCurrentPage(0);
-    setTimeLeft(15 * 60);
+    setTimeLeft(10 * 60);
     setStatus('intro');
   };
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins} phút và ${secs.toString().padStart(2, '0')} giây`;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   if (status === 'intro') {
     return (
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl mx-auto py-12 px-6"
-      >
-        <div className="bg-white rounded-[40px] p-8 md:p-14 shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-slate-100 text-center relative overflow-hidden">
-             <div className="flex items-center justify-between mb-8">
-               <button onClick={onBack} className="text-brand-muted hover:text-brand-orange font-bold flex items-center gap-2">
-                 <ChevronLeft className="w-4 h-4" /> Quay lại {season.name}
-               </button>
-             </div>
-             
-             <h1 className="text-3xl md:text-5xl font-display font-black text-[#2d2d2d] mb-6">{season.eqTest.title}</h1>
-             <p className="text-xl text-brand-muted font-medium mb-12 max-w-2xl mx-auto">{season.eqTest.description}</p>
-             
-             <div className="max-w-3xl mx-auto mb-16 text-left">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                   {season.eqTest.instructions.map((inst, i) => (
-                     <div key={i} className="flex gap-4 items-start bg-[#fffaf5] p-6 rounded-[24px] border border-brand-orange/10">
-                        <div className="w-8 h-8 rounded-full bg-brand-orange text-white flex items-center justify-center shrink-0 shadow-md">
-                          <CheckCircle2 className="w-4 h-4" />
-                        </div>
-                        <p className="text-brand-text font-medium">{inst}</p>
-                     </div>
-                   ))}
-                </div>
-             </div>
+      <div className="max-w-4xl mx-auto py-20 px-6">
+        <motion.div
+           initial={{ opacity: 0, y: 20 }}
+           animate={{ opacity: 1, y: 0 }}
+           className="glass-card p-10 md:p-16 border-none shadow-2xl relative overflow-hidden"
+        >
+          {/* Decorative Elements */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-brand-orange/[0.03] rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-brand-orange/[0.02] rounded-full translate-y-1/2 -translate-x-1/2" />
 
-             <div className="flex flex-col items-center gap-8">
-                <button
-                  onClick={() => setStatus(QUESTIONS.length > 0 ? 'testing' : 'result')}
-                  className={cn("text-white px-12 py-5 rounded-full font-black text-lg flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-xl group", season.accentColor)}
-                >
-                  {QUESTIONS.length > 0 ? "Bắt đầu bài test" : "Xem nội dung chương"} <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
-             </div>
-        </div>
-      </motion.div>
+          <div className="relative z-10">
+            <button 
+              onClick={onBack}
+              className="flex items-center gap-2 text-brand-muted hover:text-brand-text transition-colors mb-12 font-bold uppercase tracking-widest text-[10px]"
+            >
+              <ArrowLeft className="w-3 h-3" /> Quay lại chương
+            </button>
+
+            <div className="flex items-center justify-between gap-4 mb-8">
+               {season.eqTests.length > 1 && (
+                 <button 
+                   onClick={() => setActiveTestIndex(prev => (prev - 1 + season.eqTests.length) % season.eqTests.length)}
+                   className="w-10 h-10 rounded-full bg-brand-cream/50 flex items-center justify-center text-brand-muted hover:bg-brand-orange hover:text-white transition-all shadow-sm"
+                 >
+                   <ChevronLeft className="w-6 h-6" />
+                 </button>
+               )}
+               
+               <div className="text-center flex-1">
+                 <h2 className="text-4xl font-display font-bold text-[#2d2d2d]">{activeTest.title}</h2>
+                 <p className="text-brand-orange font-black text-[10px] uppercase tracking-[0.3em] mt-2">
+                   Bài test {activeTestIndex + 1}/{season.eqTests.length}
+                 </p>
+               </div>
+
+               {season.eqTests.length > 1 && (
+                 <button 
+                   onClick={() => setActiveTestIndex(prev => (prev + 1) % season.eqTests.length)}
+                   className="w-10 h-10 rounded-full bg-brand-cream/50 flex items-center justify-center text-brand-muted hover:bg-brand-orange hover:text-white transition-all shadow-sm"
+                 >
+                   <ArrowRight className="w-6 h-6" />
+                 </button>
+               )}
+            </div>
+            
+            <div className="prose prose-orange max-w-none mb-12 text-left">
+              <div className="text-lg text-brand-text/80 leading-relaxed font-serif space-y-6">
+                <p>{activeTest.description}</p>
+              </div>
+            </div>
+
+            <div className="mb-12">
+              <h3 className="text-sm font-black uppercase tracking-[0.2em] text-brand-muted mb-8 flex items-center gap-3">
+                 <div className={cn("w-2 h-8 rounded-full", season.accentColor)} />
+                 Hướng dẫn làm bài
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="bg-white border border-brand-border/40 p-6 rounded-[32px] shadow-sm">
+                   <p className="text-[10px] font-black uppercase tracking-widest text-brand-muted/60 mb-2">Số câu hỏi</p>
+                   <p className="text-2xl font-display font-black">{stats.questions} câu</p>
+                </div>
+                <div className="bg-white border border-brand-border/40 p-6 rounded-[32px] shadow-sm">
+                   <p className="text-[10px] font-black uppercase tracking-widest text-brand-muted/60 mb-2">Thời gian</p>
+                   <p className="text-2xl font-display font-black">{stats.time}</p>
+                </div>
+                <div className="bg-white border border-brand-border/40 p-6 rounded-[32px] shadow-sm md:col-span-1 text-left">
+                   <p className="text-[10px] font-black uppercase tracking-widest text-brand-muted/60 mb-2">Hình thức</p>
+                   <p className="text-lg font-bold leading-tight">Chọn mức độ phù hợp nhất</p>
+                </div>
+              </div>
+
+              <div className="bg-brand-cream/30 border border-brand-border/40 p-8 rounded-[40px] mb-12 text-left">
+                <p className="text-xs font-black uppercase tracking-widest text-brand-muted mb-6">Thang đo:</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {stats.scale.map((s) => (
+                    <div key={s.value} className="flex items-center gap-3 bg-white/60 p-3 rounded-2xl border border-brand-border/20">
+                      <span className="text-xl">{s.emoji}</span>
+                      <span className="text-sm font-bold text-brand-text/80">{s.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-brand-orange/[0.03] border-l-4 border-brand-orange p-8 rounded-r-3xl mb-12 italic text-left text-brand-text/80 leading-relaxed font-serif">
+              <p className="font-bold mb-4 not-italic text-brand-orange uppercase tracking-wider text-sm">Nguyên tắc quan trọng nhất:</p>
+              {activeTest.instructions[activeTest.instructions.length - 1]}
+            </div>
+
+            <div className="text-center space-y-8 pt-6 border-t border-brand-border/30">
+              <p className="text-brand-muted font-medium italic">
+                Ngồi thẳng lưng, đặt tay lên ngực, hít một hơi thật chậm. <br />
+                Tự nhủ: “Mình đang ở đây. Mình sẵn sàng lắng nghe chính mình.”
+              </p>
+              
+              <button 
+                onClick={() => {
+                  setStatus('testing');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className={cn("px-12 py-6 rounded-full text-white font-black uppercase tracking-[0.2em] text-sm shadow-xl hover:scale-105 active:scale-95 transition-all shadow-brand-orange/20", season.accentColor)}
+              >
+                Khi em sẵn sàng, hãy bấm để bắt đầu
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </div>
     );
   }
 
@@ -204,10 +260,31 @@ export default function EQTest({ season, onBack }: { season: SeasonInfo; onBack:
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-16">
                 {result.data.map((p, i) => (
                   <div key={i} className="bg-brand-cream/30 p-8 rounded-[40px] border border-brand-border/40 text-center">
-                    <div className="text-4xl font-display font-black text-brand-orange mb-2">{p.score}%</div>
+                    <div className="text-4xl font-display font-black text-brand-orange mb-2">{p.score}/100</div>
                     <div className="text-sm font-bold text-brand-muted uppercase tracking-wider">{p.name}</div>
                   </div>
                 ))}
+              </div>
+            ) : result.type === 'count' ? (
+              <div className="max-w-2xl mx-auto mb-16">
+                {result.interpretation ? (
+                  <div className="bg-brand-cream/30 p-10 rounded-[50px] border-2 border-brand-orange/10 text-left">
+                    <h3 className="text-4xl font-display font-black text-brand-orange mb-6 text-center">{result.interpretation.title}</h3>
+                    <p className="text-xl text-brand-text/90 leading-relaxed font-serif italic mb-8 border-l-4 border-brand-orange pl-6 min-h-[100px]">
+                      "{result.interpretation.description}"
+                    </p>
+                    <div className="bg-brand-orange/10 p-6 rounded-3xl border border-brand-orange/20">
+                      <p className="text-brand-orange font-black uppercase tracking-widest text-xs mb-3 flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4" /> Thử thách dành cho em
+                      </p>
+                      <p className="text-brand-text font-bold leading-relaxed italic">
+                        {result.interpretation.challenge}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-xl font-bold text-brand-muted italic">Cảm ơn bạn đã dũng cảm nhìn vào bên trong.</div>
+                )}
               </div>
             ) : (
               <div className="max-w-2xl mx-auto mb-16">
@@ -235,7 +312,7 @@ export default function EQTest({ season, onBack }: { season: SeasonInfo; onBack:
                 Làm lại bài test
               </button>
               <button onClick={onBack} className={cn("text-white px-12 py-5 rounded-full font-black text-lg transition-all shadow-xl hover:scale-105 active:scale-95", season.accentColor)}>
-                Quay lại Hành trình Quả Quýt
+                Quay lại Chương
               </button>
             </div>
           </div>
@@ -251,20 +328,17 @@ export default function EQTest({ season, onBack }: { season: SeasonInfo; onBack:
 
   return (
     <div className="max-w-5xl mx-auto py-10 px-6">
-      <div className="bg-[#f4f7ff] rounded-[50px] p-10 md:p-14 shadow-2xl shadow-blue-900/5 border border-[#e8eeff] relative overflow-hidden">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 border-b border-[#3b82f6]/10 pb-10">
-           <h2 className="text-3xl md:text-4xl font-display font-black text-[#1e293b] tracking-tight whitespace-nowrap">
-              CÂU HỎI {startIdx + 1} - {Math.min(startIdx + QUESTIONS_PER_PAGE, QUESTIONS.length)}/{QUESTIONS.length}
+       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 bg-white/60 p-6 rounded-[32px] border border-brand-border/20 shadow-sm">
+           <h2 className="text-2xl font-display font-black text-brand-text italic">
+              Câu {startIdx + 1} - {Math.min(startIdx + QUESTIONS_PER_PAGE, QUESTIONS.length)}
            </h2>
-           <div className="flex items-center gap-3 text-[#3b82f6] font-black text-xl bg-white px-6 py-3 rounded-2xl border-2 border-[#3b82f6]/10 shadow-sm tabular-nums">
-              <Clock className="w-6 h-6" />
-              <span>Thời gian còn lại — {formatTime(timeLeft)}</span>
+           <div className="flex items-center gap-3 text-brand-muted font-black text-[10px] uppercase shadow-sm tracking-[0.2em] bg-white px-6 py-3 rounded-2xl border border-brand-border/20 tabular-nums">
+              <Clock className="w-4 h-4 text-brand-orange" />
+              <span>Thời gian còn lại: {formatTime(timeLeft)}</span>
            </div>
         </div>
 
-        <p className="text-[#64748b] font-bold mb-14 text-xl italic opacity-70">Đánh dấu vào câu trả lời phù hợp nhất với con người thật của bạn.</p>
-
-        <div className="space-y-0 relative">
+        <div className="space-y-6">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentPage}
@@ -272,36 +346,44 @@ export default function EQTest({ season, onBack }: { season: SeasonInfo; onBack:
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.4 }}
-              className="space-y-0"
+              className="space-y-6"
             >
-              {pageQuestions.map((q, i) => (
-                <div key={q.id} className={cn(
-                  "py-12 border-b border-[#e2e8f0] last:border-0",
-                  i === 0 && "pt-0"
-                )}>
-                  <p className="text-2xl md:text-3xl font-display font-black text-[#1e293b] mb-10 leading-[1.4] tracking-tight">
+              {pageQuestions.map((q) => (
+                <div key={q.id} className="glass-card p-10 md:p-12 border-none shadow-sm bg-white/80">
+                  <p className="text-xl md:text-2xl font-display font-black text-brand-text mb-10 leading-relaxed">
                     {q.text}
                   </p>
                   
-                  <div className="flex flex-wrap items-center gap-8 md:gap-12 ml-3">
-                    {OPTIONS.map((opt) => (
+                  <div className={cn(
+                    "flex flex-wrap items-stretch gap-6 md:gap-8",
+                    q.options ? "flex-col" : "flex-row items-center"
+                  )}>
+                    {(q.options || stats.scale).map((s) => (
                       <button 
-                        key={opt.value}
-                        onClick={() => handleAnswer(q.id, opt.value)}
-                        className="group flex items-center gap-4 transition-all"
+                        key={s.value}
+                        onClick={() => handleAnswer(q.id, s.value)}
+                        className={cn(
+                          "group flex items-center gap-4 transition-all text-left",
+                          q.options ? "w-full p-4 rounded-3xl border-2" : "flex-col w-auto",
+                          answers[q.id] === s.value 
+                            ? "border-brand-orange bg-brand-orange/5 shadow-sm" 
+                            : "border-gray-100 bg-gray-50/50 hover:border-brand-orange/30 hover:bg-white",
+                          !q.options && "border-none bg-transparent p-0"
+                        )}
                       >
                         <div className={cn(
-                          "w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all shadow-sm",
-                          answers[q.id] === opt.value 
-                            ? "border-brand-orange bg-brand-orange" 
-                            : "border-gray-200 group-hover:border-brand-orange/40 bg-white"
+                          "w-12 h-12 rounded-2xl border-2 flex shrink-0 items-center justify-center transition-all shadow-sm text-lg font-black",
+                          answers[q.id] === s.value 
+                            ? "border-brand-orange bg-brand-orange text-white shadow-brand-orange/20" 
+                            : "border-gray-100 bg-gray-50 group-hover:border-brand-orange/30 group-hover:bg-white"
                         )}>
-                          {answers[q.id] === opt.value && <div className="w-3 h-3 rounded-full bg-white shadow-inner" />}
+                          {s.value}
                         </div>
                         <span className={cn(
-                          "text-lg font-bold font-display tracking-tight transition-colors",
-                          answers[q.id] === opt.value ? "text-brand-orange" : "text-gray-400 group-hover:text-brand-orange"
-                        )}>{opt.label}</span>
+                          "font-bold transition-colors",
+                          q.options ? "text-lg text-brand-text/90" : "text-[10px] font-black uppercase tracking-widest text-center max-w-[80px] leading-tight",
+                          answers[q.id] === s.value ? "text-brand-orange" : "text-brand-muted/60 group-hover:text-brand-orange/60"
+                        )}>{s.label}</span>
                       </button>
                     ))}
                   </div>
@@ -311,13 +393,16 @@ export default function EQTest({ season, onBack }: { season: SeasonInfo; onBack:
           </AnimatePresence>
         </div>
 
-        <div className="mt-16 flex justify-between items-center px-4">
+        <div className="mt-12 flex justify-between items-center bg-white/40 p-6 rounded-[40px] border border-brand-border/20">
           <button 
-            onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+            onClick={() => {
+              setCurrentPage(prev => Math.max(0, prev - 1));
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
             disabled={currentPage === 0}
-            className="flex items-center gap-3 px-10 py-5 rounded-full border-2 border-[#cbd5e1] text-[#64748b] font-black text-lg bg-white hover:bg-[#f8fafc] hover:border-[#3b82f6]/20 transition-all shadow-sm disabled:opacity-20"
+            className="flex items-center gap-2 px-8 py-4 rounded-full text-brand-muted font-bold tracking-widest uppercase text-[10px] hover:bg-white transition-all disabled:opacity-0"
           >
-            ← Quay lại
+            <ChevronLeft className="w-4 h-4" /> Quay lại
           </button>
           
           <button 
@@ -326,20 +411,20 @@ export default function EQTest({ season, onBack }: { season: SeasonInfo; onBack:
                 setStatus('result');
               } else {
                 setCurrentPage(prev => prev + 1);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }
             }}
             disabled={!allAnsweredOnPage}
             className={cn(
-               "flex items-center gap-3 px-12 py-5 rounded-full font-black text-lg transition-all shadow-xl",
+               "flex items-center gap-3 px-10 py-5 rounded-full font-black text-xs uppercase tracking-[0.2em] transition-all shadow-lg",
                allAnsweredOnPage 
-                ? "bg-[#3b82f6] text-white hover:bg-[#2563eb] hover:scale-105 active:scale-95" 
-                : "bg-[#e2e8f0] text-[#94a3b8] cursor-not-allowed"
+                ? "bg-[#2d2d2d] text-white hover:scale-105 active:scale-95" 
+                : "bg-brand-border text-brand-muted cursor-not-allowed opacity-50"
             )}
           >
-            {isLastPage ? "Hoàn thành bài test →" : "Tiếp theo →"}
+            {isLastPage ? "Xem kết quả" : "Trang tiếp theo"} <ArrowRight className="w-4 h-4" />
           </button>
         </div>
-      </div>
     </div>
   );
 }

@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", serif;
+  
+  --color-brand-orange: #f26622;
+  --color-brand-cream: #fff9f0;
+  --color-brand-surface: #ffffff;
+  --color-brand-border: #fce7d2;
+  --color-brand-text: #4a3728;
+  --color-brand-muted: #8b735b;
+
+  @keyframes wave-motion {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  
+  --animate-wave: wave-motion 4s linear infinite;
+}
+
+.animate-wave {
+  animation: var(--animate-wave);
+}
+
+body {
+  @apply bg-brand-cream text-brand-text font-sans antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-display font-semibold;
+}
+
+.glass-card {
+  @apply bg-white/80 backdrop-blur-sm border border-brand-border rounded-3xl shadow-sm;
+}
+
+@keyframes wave {
+  0%, 100% { height: 4px; }
+  50% { height: 16px; }
+}
+
+.audio-bar {
+  @apply bg-brand-orange w-1 rounded-full;
+  animation: wave 1s ease-in-out infinite;
+}
+

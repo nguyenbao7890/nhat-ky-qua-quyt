@@ -20,19 +20,14 @@ export default function JournalSection() {
   const currentWordCount = getWordCount(content);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const nextContent = e.target.value;
-    if (getWordCount(nextContent) <= 500) {
-      setContent(nextContent);
-    }
+    setContent(e.target.value);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!auth.currentUser) return;
-
     if (!content.trim()) return;
-    if (currentWordCount > 500) return;
 
     setLoading(true);
     const identity = getRandomIdentity();
@@ -40,7 +35,7 @@ export default function JournalSection() {
     try {
       await addDoc(collection(db, 'statuses'), {
         content: content.trim(),
-        authorId: auth.currentUser.uid,
+        authorId: auth.currentUser?.uid,
         anonymousName: identity.name,
         avatarEmoji: identity.avatar,
         createdAt: serverTimestamp(),
@@ -50,7 +45,7 @@ export default function JournalSection() {
       setTimeout(() => setSent(false), 3000);
     } catch (error) {
       console.error('Error adding document: ', error);
-      alert('Không thể chia sẻ lúc này. Vui lòng kiểm tra kết nối mạng hoặc quay lại sau.');
+      alert('Không thể chia sẻ lúc này. Vui lòng kiểm tra kết nối mạng.');
       handleFirestoreError(error, OperationType.CREATE, 'statuses');
     } finally {
       setLoading(false);
@@ -69,8 +64,8 @@ export default function JournalSection() {
       </div>
 
       <div className="relative z-10 max-w-2xl">
-        <h3 className="text-2xl font-display font-bold mb-3 text-brand-text">Sau khi nghe, em đang cảm thấy gì?</h3>
-        <p className="text-brand-muted mb-10 text-sm font-medium">Hãy viết vài dòng để lắng nghe chính mình.</p>
+        <h3 className="text-2xl font-display font-bold mb-3 text-brand-text">Cùng chia sẻ cảm xúc</h3>
+        <p className="text-brand-muted mb-10 text-sm font-medium">Chia sẻ ẩn danh với cộng đồng để thấy mình không đơn độc. <br /><span className="text-[10px] opacity-60">(Phần này sẽ không lưu vào nhật ký cá nhân của em)</span></p>
         
         <form onSubmit={handleSubmit} className="relative z-50 group/form">
           <textarea
@@ -83,9 +78,6 @@ export default function JournalSection() {
           />
           
           <div className="absolute bottom-6 right-6 flex items-center gap-5 z-[70]">
-            <span className="text-[11px] font-bold text-brand-muted/40 uppercase tracking-[0.2em] bg-white/50 px-3 py-1 rounded-full border border-brand-border/30">
-              {currentWordCount}/500 từ
-            </span>
             <button
               disabled={loading || !content.trim()}
               className="bg-brand-orange/10 text-brand-orange hover:bg-brand-orange hover:text-white px-10 py-4 rounded-full font-bold shadow-2xl shadow-brand-orange/0 hover:shadow-brand-orange/20 transition-all flex items-center gap-3 active:scale-95 disabled:opacity-40"

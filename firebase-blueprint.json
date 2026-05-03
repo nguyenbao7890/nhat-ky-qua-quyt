@@ -24,6 +24,18 @@
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["content", "authorId", "anonymousName", "createdAt"]
+    },
+    "JournalEntry": {
+      "title": "Journal Entry",
+      "description": "Private reflection for the user",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "timestamp": { "type": "number" }
+      },
+      "required": ["userId", "content", "createdAt"]
     }
   },
   "firestore": {
@@ -34,6 +46,10 @@
     "statuses": {
       "schema": "Status",
       "description": "Collection of anonymous mood statuses"
+    },
+    "journal_entries": {
+      "schema": "JournalEntry",
+      "description": "Private personal journal entries"
     }
   }
 }

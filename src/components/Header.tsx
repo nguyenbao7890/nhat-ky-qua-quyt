@@ -6,7 +6,7 @@ import { cn } from '../lib/utils';
 
 import { SeasonInfo } from '../seasonsData';
 
-export default function Navbar({ currentView, onNavigate }: { currentView: string, onNavigate: (view: any) => void }) {
+export default function Navbar({ currentView, currentSeason, onNavigate }: { currentView: string, currentSeason?: string, onNavigate: (view: any) => void }) {
   const user = auth.currentUser;
 
   return (
@@ -17,26 +17,27 @@ export default function Navbar({ currentView, onNavigate }: { currentView: strin
             <div className="flex items-center gap-3 cursor-pointer" onClick={() => onNavigate('home')}>
               <img src="https://em-content.zobj.net/source/apple/391/tangerine_1f34a.png" alt="Logo" className="w-9 h-9 drop-shadow-sm" />
               <div className="flex flex-col">
-                <span className="text-xl font-display font-bold text-brand-text leading-none mb-0.5">Nhật ký Quả Quýt</span>
+                <span className="text-2xl font-serif font-black text-brand-text leading-none mb-0.5 italic tracking-tight">Nhật ký Quả Quýt</span>
                 <div className="h-0.5 w-full bg-brand-orange/10 rounded-full" />
               </div>
             </div>
             
-            <div className="hidden lg:flex gap-10">
+            <div className="hidden lg:flex gap-8">
               {[
                 { name: 'Trang chủ', id: 'home' },
-                { name: 'Test EQ', id: 'eq-test' },
-                { name: '4 Chương', id: 'home' },
-                { name: 'Thư viện', id: 'library' },
-                { name: 'Cộng đồng', id: '#' },
-                { name: 'Về chúng tôi', id: '#' }
+                { name: 'Chương Xuân', id: 'spring' },
+                { name: 'Chương Hạ', id: 'summer' },
+                { name: 'Chương Thu', id: 'autumn' },
+                { name: 'Chương Đông', id: 'winter' },
+                { name: 'Lời kết', id: 'conclusion' },
+                { name: 'Về chúng tôi', id: 'about' }
               ].map((item) => (
                 <button 
                   key={item.name} 
-                  onClick={() => item.id !== '#' && onNavigate(item.id)}
+                  onClick={() => onNavigate(item.id)}
                   className={cn(
-                    "text-[13px] font-bold uppercase tracking-[0.1em] transition-all hover:text-brand-orange relative py-1",
-                    (item.id === currentView || (item.name === '4 Chương' && currentView === 'home')) 
+                    "text-[12px] font-bold uppercase tracking-[0.1em] transition-all hover:text-brand-orange relative py-1",
+                    (item.id === currentView || (['spring', 'summer', 'autumn', 'winter'].includes(item.id) && currentView === 'season' && currentSeason === item.id)) 
                       ? "text-brand-orange after:absolute after:bottom-[-2px] after:left-0 after:w-full after:h-0.5 after:bg-brand-orange after:rounded-full" 
                       : "text-brand-muted/70"
                   )}
@@ -59,18 +60,10 @@ export default function Navbar({ currentView, onNavigate }: { currentView: strin
             </div>
             
             <div className="flex items-center gap-4 pl-6 border-l border-brand-border/60">
-              <div className="text-right hidden sm:block">
-                <button 
-                  onClick={() => window.close()}
-                  className="text-[11px] uppercase tracking-[0.2em] text-[#f26622] hover:bg-[#f26622]/5 px-3 py-1.5 rounded-full transition-all font-bold flex items-center gap-2"
-                >
-                  Thoát ra <LogOut className="w-3 h-3" />
-                </button>
-              </div>
               <div className="w-12 h-12 rounded-full border-2 border-[#f26622]/20 overflow-hidden flex items-center justify-center p-0.5 shadow-md group cursor-pointer hover:border-[#f26622]/40 transition-all bg-white">
                 <img 
                   src="https://api.dicebear.com/7.x/avataaars/svg?seed=Quýt&backgroundColor=ffdfbf" 
-                  alt="Avatar Hoạt Hình" 
+                  alt="Avatar" 
                   className="w-full h-full object-contain rounded-full" 
                 />
               </div>

@@ -1,5 +1,5 @@
 const ANIMALS = [
-  'Cá Voi', 'Cá Mập', 'Cá Ngựa', 'Sứa', 'Rùa Biển', 
+  'Cá voi', 'Cà Mập', 'Bạch Tuộc', 'Rùa biển', 
   'Chim Cánh Cụt', 'Gấu Bắc Cực', 'Hải Cẩu', 'Vịt Con', 
   'Mèo Nhỏ', 'Cáo Cam', 'Gấu Trúc', 'Sóc Nhỏ', 'Thỏ Trắng'
 ];
@@ -10,8 +10,8 @@ const COLORS = [
 ];
 
 const AVATARS = [
-  '🐳', '🦈', ' Seahorse', '🐙', '🐢', 
-  '🐧', '🐻', '🦭', '🦆', 
+  '🐳', '🦈', '🐙', '🐢', 
+  '🐧', '🐻', '🦆', 
   '🐱', '🦊', '🐼', '🐿️', '🐰'
 ];
 

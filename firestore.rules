@@ -43,5 +43,19 @@ service cloud.firestore {
       allow create: if isSignedIn() && isValidStatus(request.resource.data);
       // No updates or deletes for now to keep it simple and secure as a feed
     }
+
+    // --- Journal Entries ---
+    match /journal_entries/{entryId} {
+      function isValidEntry(data) {
+        return data.userId == request.auth.uid &&
+               data.content is string && 
+               data.content.size() <= 2000;
+      }
+
+      allow list: if isSignedIn(); // Filtered by query in client
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && isValidEntry(request.resource.data);
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
   }
 }

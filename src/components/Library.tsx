@@ -13,8 +13,8 @@ const seasons = [
   {
     id: 'spring' as SeasonId,
     name: 'Xuân',
-    theme: 'Khởi đầu mới',
-    description: 'Gieo mầm hy vọng và lắng nghe sự sống đâm chồi trong tâm hồn.',
+    theme: 'Gieo mầm (Tự nhận thức)',
+    description: 'Nhận diện bản thân, giá trị sống và gieo những hạt mầm hy vọng đầu tiên.',
     icon: Flower,
     color: 'text-emerald-500',
     bgColor: 'bg-emerald-50',
@@ -26,7 +26,7 @@ const seasons = [
     id: 'summer' as SeasonId,
     name: 'Hạ',
     theme: 'Quản trị biến cố',
-    description: 'Trở về với chính mình giữa những biến động gay gắt của cuộc đời.',
+    description: 'Ôm ấp nỗi đau, đối diện nghịch cảnh và học cách đứng dậy sau biến cố.',
     icon: Sun,
     color: 'text-brand-orange',
     bgColor: 'bg-brand-orange/5',
@@ -37,8 +37,8 @@ const seasons = [
   {
     id: 'autumn' as SeasonId,
     name: 'Thu',
-    theme: 'Buông bỏ nhẹ nhàng',
-    description: 'Học cách chấp nhận và để những gì không còn phù hợp rơi rụng.',
+    theme: 'Thấu cảm & Kết nối',
+    description: 'Học cách lắng nghe, đồng cảm và hàn gắn các mối quan hệ bằng trái tim.',
     icon: Leaf,
     color: 'text-amber-600',
     bgColor: 'bg-amber-50',
@@ -49,8 +49,8 @@ const seasons = [
   {
     id: 'winter' as SeasonId,
     name: 'Đông',
-    theme: 'Tĩnh lặng nội tại',
-    description: 'Tìm thấy sự ấm áp và bình yên trong những khoảng lặng sâu nhất.',
+    theme: 'Buông bỏ & Tỉnh thức',
+    description: 'Chấp nhận vô thường, buông bỏ cái cũ và tích tụ năng lượng tĩnh tại.',
     icon: Snowflake,
     color: 'text-blue-500',
     bgColor: 'bg-blue-50',
@@ -62,11 +62,11 @@ const seasons = [
 
 export default function Library({ onSelectSeason }: LibraryProps) {
   return (
-    <div className="max-w-6xl mx-auto py-12 px-6">
+    <div className="max-w-7xl mx-auto py-12 px-6">
       <div className="text-center mb-16">
-        <h1 className="text-5xl md:text-6xl font-display font-black text-[#2d2d2d] mb-6">Thư viện 4 Mùa</h1>
-        <p className="text-xl text-[#8e8e8e] font-medium max-w-2xl mx-auto leading-relaxed">
-          Mỗi mùa mang một thông điệp riêng. Hãy chọn một "chương" cảm xúc <br className="hidden md:block" /> mà bạn đang muốn kết nối lúc này.
+        <h1 className="text-5xl md:text-7xl font-display font-black text-[#2d2d2d] mb-6">Thư viện</h1>
+        <p className="text-xl text-[#8e8e8e] font-medium max-w-3xl mx-auto leading-relaxed">
+          Nơi lưu giữ hành trình nuôi dưỡng EQ qua từng mùa của Quả Quýt. <br className="hidden md:block" /> Hãy chọn chương hành trình mà tâm hồn bạn đang cần lúc này.
         </p>
       </div>
 

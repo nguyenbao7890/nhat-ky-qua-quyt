@@ -3,7 +3,15 @@ import { Quote, ChevronRight, CheckSquare, Pencil, Clock, PenTool, Sparkles } fr
 import { cn } from '../lib/utils';
 import { SeasonInfo } from '../seasonsData';
 
-export default function RightSidebar({ season }: { season: SeasonInfo }) {
+export default function RightSidebar({ 
+  season, 
+  onAction, 
+  onOpenJournal 
+}: { 
+  season: SeasonInfo;
+  onAction: (text: string) => void;
+  onOpenJournal: () => void;
+}) {
   const accentColor = season.id === 'summer' ? 'text-[#f26622]' : 
                      season.id === 'spring' ? 'text-emerald-500' :
                      season.id === 'autumn' ? 'text-amber-600' : 'text-blue-500';
@@ -42,6 +50,7 @@ export default function RightSidebar({ season }: { season: SeasonInfo }) {
                 icon={<span className="text-sm">{action.icon}</span>}
                 title={action.text}
                 season={season}
+                onClick={() => onAction(action.text)}
               />
             </div>
           ))}
@@ -49,7 +58,10 @@ export default function RightSidebar({ season }: { season: SeasonInfo }) {
       </div>
 
       {/* Write to journal button */}
-      <button className={cn("w-full group relative overflow-hidden p-1 rounded-3xl transition-transform hover:scale-[1.02] active:scale-[0.98]", season.accentColor)}>
+      <button 
+        onClick={onOpenJournal}
+        className={cn("w-full group relative overflow-hidden p-1 rounded-3xl transition-transform hover:scale-[1.02] active:scale-[0.98]", season.accentColor)}
+      >
         <div className={cn("text-white px-8 py-5 rounded-[22px] font-bold flex items-center justify-between", season.accentColor)}>
           <div className="text-left">
             <p className="text-[10px] uppercase tracking-widest opacity-80 mb-1">Viết vào</p>
@@ -74,9 +86,10 @@ interface PracticeItemProps {
   icon: React.ReactNode;
   title: string;
   season: SeasonInfo;
+  onClick: () => void;
 }
 
-function PracticeItem({ icon, title, season }: PracticeItemProps) {
+function PracticeItem({ icon, title, season, onClick }: PracticeItemProps) {
   const accentText = season.id === 'summer' ? 'group-hover:text-[#f26622]' : 
                     season.id === 'spring' ? 'group-hover:text-emerald-500' :
                     season.id === 'autumn' ? 'group-hover:text-amber-600' : 'group-hover:text-blue-500';
@@ -90,7 +103,10 @@ function PracticeItem({ icon, title, season }: PracticeItemProps) {
                   season.id === 'autumn' ? 'hover:bg-amber-600/[0.03]' : 'hover:bg-blue-500/[0.03]';
 
   return (
-    <button className={cn("w-full flex items-center justify-between p-4 rounded-2xl bg-brand-cream/20 transition-all border border-transparent group", accentBg, accentBorder)}>
+    <button 
+      onClick={onClick}
+      className={cn("w-full flex items-center justify-between p-4 rounded-2xl bg-brand-cream/20 transition-all border border-transparent group", accentBg, accentBorder)}
+    >
       <div className="flex items-center gap-4">
         <div className={cn("w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-brand-muted/60 transition-colors", accentText)}>
           {icon}
